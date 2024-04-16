@@ -34,6 +34,9 @@ public class UserDTO {
 
     }
 
+    public UserDTO(long l, String user2, String s, UserRole warehouseManager) {
+    }
+
     public Long getId() {
         return id;
     }

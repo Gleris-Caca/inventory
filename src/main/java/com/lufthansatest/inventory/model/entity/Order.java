@@ -1,5 +1,7 @@
 package com.lufthansatest.inventory.model.entity;
 
+import com.lufthansatest.inventory.mapper.OrderMapper;
+import com.lufthansatest.inventory.model.dto.OrderItemDTO;
 import com.lufthansatest.inventory.model.enums.OrderStatus;
 import jakarta.persistence.*;
 
@@ -23,7 +25,10 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
     private List<OrderItem> items;
 
     @Column(name = "deadline_date")

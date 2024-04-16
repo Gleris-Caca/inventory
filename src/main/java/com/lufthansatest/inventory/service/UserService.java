@@ -12,7 +12,6 @@ public interface UserService {
 
     UserDTO register(UserDTO userDTO);
     List<UserDTO> loadAllUsers();
-    UserDTO loadUserByEmail(String email);
     UserDTO updateUser(Long id, User requestedUser);
     void deleteUser(Long id);
 }

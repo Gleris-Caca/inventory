@@ -8,9 +8,6 @@ import java.util.List;
 
 public interface OrderService {
     OrderDTO createOrder(OrderDTO orderDTO);
-  //  Order addItemToOrder(Long orderId, Long itemId, int quantity);
- //   Order removeItemFromOrder(Long orderId, Long itemId);
- //   Order modifyItemQuantity(Long orderId, Long itemId, int newQuantity);
     Order cancelOrder(Long orderId);
     Order submitOrderForApproval(Long orderId);
 

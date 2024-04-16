@@ -1,7 +1,8 @@
 package com.lufthansatest.inventory.model.dto;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.lufthansatest.inventory.mapper.OrderMapper;
 import com.lufthansatest.inventory.model.entity.Order;
+import com.lufthansatest.inventory.model.entity.OrderItem;
 import com.lufthansatest.inventory.model.enums.OrderStatus;
 import lombok.Data;
 
@@ -15,11 +16,12 @@ public class OrderDTO {
     private String orderNumber;
     private Date submittedDate;
     private OrderStatus status;
-    private List<OrderItemDTO> items;
+    private List<OrderItem> items;
     private Date deadlineDate;
     private String reason;
+    private OrderMapper orderMapper;
 
-    public OrderDTO(Long id, String orderNumber, Date submittedDate, OrderStatus status, List<OrderItemDTO> items, Date deadlineDate, String reason) {
+    public OrderDTO(Long id, String orderNumber, Date submittedDate, OrderStatus status, List<OrderItem> items, Date deadlineDate, String reason) {
         this.id = id;
         this.orderNumber = orderNumber;
         this.submittedDate = submittedDate;
@@ -69,11 +71,11 @@ public class OrderDTO {
         this.status = status;
     }
 
-    public List<OrderItemDTO> getItems() {
+    public List<OrderItem> getItems() {
         return items;
     }
 
-    public void setItems(List<OrderItemDTO> items) {
+    public void setItems(List<OrderItem> items) {
         this.items = items;
     }
 

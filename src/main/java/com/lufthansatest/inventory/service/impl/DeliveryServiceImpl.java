@@ -33,20 +33,18 @@ public class DeliveryServiceImpl implements DeliveryService {
 
 
     public void scheduleDeliveryForApprovedOrder(Long orderId, Date deliveryDate, List<Truck> trucks) throws DeliverySchedulingException {
-        // Retrieve the approved order
+
         Order order = orderService.getOrderById(orderId);
 
-        // Validate order status
         if (!order.getStatus().equals(OrderStatus.APPROVED)) {
             throw new DeliverySchedulingException("Delivery can only be scheduled for approved orders");
         }
 
-        // Validate delivery date (excluding Sundays)
+        // e djela pushim
         if (isSunday(deliveryDate)) {
             throw new DeliverySchedulingException("Truck drivers do not work on Sundays. Choose a different date.");
         }
 
-        // Check truck availability and capacity
         for (Truck truck : trucks) {
             if (!truckService.isTruckAvailable(truck, deliveryDate)) {
                 throw new DeliverySchedulingException("Truck " + truck.getLicensePlate() + " is not available for delivery on " + deliveryDate);
@@ -56,14 +54,11 @@ public class DeliveryServiceImpl implements DeliveryService {
             }
         }
 
-        // Schedule the delivery
         order.setStatus(OrderStatus.UNDER_DELIVERY);
         order.setDeliveryDate(deliveryDate);
 
-        // Update item quantity based on scheduled delivery
         inventoryService.updateItemQuantityForScheduledDelivery(order);
 
-        // Save the updated order
         orderService.updateOrder(order);
     }
 

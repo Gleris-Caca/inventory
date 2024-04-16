@@ -45,25 +45,56 @@ public class OrderServiceImpl implements OrderService {
         if (optionalOrder.isPresent()) {
             Order order = optionalOrder.get();
 
-            // Check if the order status allows updates
-            if (order.getStatus() == OrderStatus.CREATED || order.getStatus() == OrderStatus.DECLINED) {
-                // Update order details
-                order.setOrderNumber(updatedOrderDTO.getOrderNumber());
-                order.setSubmittedDate(updatedOrderDTO.getSubmittedDate());
-                order.setStatus(updatedOrderDTO.getStatus());
-                order.setDeadlineDate(updatedOrderDTO.getDeadlineDate());
-                order.setReason(updatedOrderDTO.getReason());
+            Order orderToUpdate = orderMapper.toEntity(updatedOrderDTO);
 
-                // Update order items
-                List<OrderItemDTO> updatedItems = updatedOrderDTO.getItems();
-                order.getItems().clear();
-                for (OrderItemDTO updatedItem : updatedItems) {
-                    order.getItems().add(updatedItem);
+
+            // Check if the order status allows updates
+            if (order.getStatus().equals(OrderStatus.CREATED) ||
+                order.getStatus().equals(OrderStatus.DECLINED)) {
+                // Update order details
+                if (Boolean.FALSE.equals(orderToUpdate.getOrderNumber().isEmpty())){
+                    order.setOrderNumber(orderToUpdate.getOrderNumber());
+                }
+                if (Boolean.FALSE.equals(orderToUpdate.getSubmittedDate()!=null)) {
+                    order.setSubmittedDate(updatedOrderDTO.getSubmittedDate());
                 }
 
+                if (Boolean.FALSE.equals(orderToUpdate.getStatus()!=null)) {
+                    order.setStatus(updatedOrderDTO.getStatus());
+                }
+                if (Boolean.FALSE.equals(orderToUpdate.getDeadlineDate()!=null)) {
+                    order.setDeadlineDate(updatedOrderDTO.getDeadlineDate());
+                }
+                if (Boolean.FALSE.equals(orderToUpdate.getReason()!=null)) {
+                    order.setReason(updatedOrderDTO.getReason());
+                }
+                if (updatedOrderDTO.getItems() != null) {
+                    order.setItems(updatedOrderDTO.getItems());
+                }
+
+//                List<OrderItem> updatedItems = updatedOrderDTO.getItems();
+
+//                if (Boolean.TRUE.equals(updatedItems != null)) {
+//                    int count = 0;
+//                    for (OrderItem updatedItem : updatedItems) {
+//
+//                        //We check if the item id is provided and then we update
+//                        if (updatedItems.get(count).getItem().getId()!=null) {
+//                            InventoryItem findItem = inventoryService.findInventoryItemById(updatedItems.get(count).getItem().getId());
+//
+//                            if (updatedItems.get(count).getItem().getId().equals(order.getItems().get(count).getId())) {
+//                                order.getItems().set(count, updatedItem);
+//                            }
+//                        } else {
+//                            //Here we know item id is not provided and then we just add new item
+//                            order.setItems(updatedItems);
+//                        }
+//                        count++;
+//                    }
+//                }
                 // Save the updated order
-                Order savedOrder = orderRepository.save(order);
-                return new OrderDTO(savedOrder);
+                orderRepository.save(order);
+                return orderMapper.toDto(order);
             } else {
                 throw new GeneralException("Order cannot be updated because its status is not CREATED or DECLINED");
             }

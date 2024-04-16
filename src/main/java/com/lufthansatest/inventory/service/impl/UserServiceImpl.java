@@ -69,12 +69,7 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public UserDTO loadUserByEmail(String email) {
-        Optional<User> user = userRepository.findByEmail(email);
-        checkIfUserExist(user);
-        return userMapper.toDto(user.get());
-    }
+
     private void checkIfUserExist(Optional<User> user) {
         if (user.isEmpty() || !user.get().isEnabled()) {
             if (user.isEmpty()) //is empty user was not found

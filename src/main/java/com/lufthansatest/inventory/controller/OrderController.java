@@ -37,7 +37,7 @@ public class OrderController {
     }
 
     @PreAuthorize(value = "hasAnyRole('CLIENT')")
-    @PutMapping("/{orderId}")
+    @PutMapping("/update/{orderId}")
     public ResponseEntity<OrderDTO> updateOrder(@PathVariable Long orderId, @RequestBody OrderDTO updatedOrderDTO) {
         OrderDTO updatedOrder = orderService.updateOrder(orderId, updatedOrderDTO);
         return new ResponseEntity<>(updatedOrder, HttpStatus.OK);
@@ -123,6 +123,7 @@ public class OrderController {
     }
 
 
+    //e testuar me postman behet vetem kur eshte under_delivery
     @PreAuthorize(value = "hasAnyRole('WAREHOUSE_MANAGER')")
     @PutMapping("/{orderId}/fulfill")
     public ResponseEntity<String> markOrderAsFulfilled(@PathVariable Long orderId) {

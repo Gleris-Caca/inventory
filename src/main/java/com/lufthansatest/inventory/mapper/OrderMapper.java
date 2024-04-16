@@ -1,7 +1,9 @@
 package com.lufthansatest.inventory.mapper;
 
 import com.lufthansatest.inventory.model.dto.OrderDTO;
+import com.lufthansatest.inventory.model.dto.OrderItemDTO;
 import com.lufthansatest.inventory.model.entity.Order;
+import com.lufthansatest.inventory.model.entity.OrderItem;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -17,16 +19,16 @@ public class OrderMapper extends AbstractMapper<Order, OrderDTO> {
         if (orderDto == null) {
             return null;
         }
-
+        OrderItem orderItem;
         log.info("Converting OrderDto to Entity");
         Order order = new Order();
         order.setId(orderDto.getId());
         order.setOrderNumber(orderDto.getOrderNumber());
         order.setSubmittedDate(orderDto.getSubmittedDate());
         order.setStatus(orderDto.getStatus());
-        // order.setItems(orderDto.getItems());
+        order.setItems(orderDto.getItems());
         order.setDeadlineDate(orderDto.getDeadlineDate());
-        // You may need to map other fields if necessary
+        order.setReason(orderDto.getReason());
         return order;
     }
 
@@ -42,9 +44,9 @@ public class OrderMapper extends AbstractMapper<Order, OrderDTO> {
         orderDto.setOrderNumber(order.getOrderNumber());
         orderDto.setSubmittedDate(order.getSubmittedDate());
         orderDto.setStatus(order.getStatus());
-        //  orderDto.setItems(order.getItems());
+        orderDto.setItems(order.getItems());
         orderDto.setDeadlineDate(order.getDeadlineDate());
-        // You may need to map other fields if necessary
+        orderDto.setReason(orderDto.getReason());
         return orderDto;
     }
 

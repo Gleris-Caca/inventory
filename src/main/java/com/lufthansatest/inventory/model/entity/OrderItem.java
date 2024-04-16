@@ -10,20 +10,20 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id")
-    private Order order;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "order_id")
+//    private Order order;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "item_id")
     private InventoryItem item;
 
     @Column(name = "requested_quantity")
     private int requestedQuantity;
 
-    public OrderItem(Long id, Order order, InventoryItem item, int requestedQuantity) {
+    public OrderItem(Long id, InventoryItem item, int requestedQuantity) {
         this.id = id;
-        this.order = order;
+//        this.order = order;
         this.item = item;
         this.requestedQuantity = requestedQuantity;
     }
@@ -44,13 +44,13 @@ public class OrderItem {
         this.id = id;
     }
 
-    public Order getOrder() {
-        return order;
-    }
-
-    public void setOrder(Order order) {
-        this.order = order;
-    }
+//    public Order getOrder() {
+//        return order;
+//    }
+//
+//    public void setOrder(Order order) {
+//        this.order = order;
+//    }
 
     public InventoryItem getItem() {
         return item;
