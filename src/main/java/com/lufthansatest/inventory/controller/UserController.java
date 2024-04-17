@@ -6,11 +6,13 @@ import com.lufthansatest.inventory.service.UserService;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/user")
@@ -20,14 +22,18 @@ public class UserController {
     private final UserService userService;
 
     //e testuar me postman
-    @PreAuthorize(value = "hasAnyRole('SYSTEM_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('SYSTEM_ADMIN')")
     @RequestMapping(method = RequestMethod.GET, path = "/allUsers")
     public ResponseEntity<List<UserDTO>> getAllUsers() {
-        return ResponseEntity.ok(userService.loadAllUsers());
+        try {
+            return ResponseEntity.ok(userService.loadAllUsers());
+        }catch (Exception e){
+            return ResponseEntity.of(ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED,e.getLocalizedMessage())).build();
+        }
     }
 
     //e testuar
-    @PreAuthorize(value = "hasAnyRole('SYSTEM_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('SYSTEM_ADMIN')")
     @PostMapping("/createUser")
     public ResponseEntity<UserDTO> createUser(@RequestBody User userDTO) {
         UserDTO createdUser = userService.createUser(userDTO);

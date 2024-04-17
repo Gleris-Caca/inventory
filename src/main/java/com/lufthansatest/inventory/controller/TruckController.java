@@ -18,7 +18,6 @@ import java.util.List;
 public class TruckController {
     private final TruckService truckService;
 
-    //e testuar
     @PreAuthorize(value = "hasAnyRole('WAREHOUSE_MANAGER')")
     @GetMapping()
     public ResponseEntity<List<Truck>> getAllTrucks() {
@@ -26,7 +25,7 @@ public class TruckController {
         return ResponseEntity.ok(trucks);
     }
 
-    //e testuar
+
     @PreAuthorize(value = "hasAnyRole('WAREHOUSE_MANAGER')")
     @GetMapping("/{id}")
     public ResponseEntity<Truck> getTruckById(@PathVariable Long id) {
@@ -34,7 +33,7 @@ public class TruckController {
         return ResponseEntity.ok(truck);
     }
 
-    // e testuar me postman
+
     @PreAuthorize(value = "hasAnyRole('WAREHOUSE_MANAGER')")
     @PostMapping("/createTruck")
     public ResponseEntity<Truck> createTruck(@RequestBody Truck truck) {
@@ -42,7 +41,6 @@ public class TruckController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTruck);
     }
 
-    //e testuar
     @PreAuthorize(value = "hasAnyRole('WAREHOUSE_MANAGER')")
     @PutMapping("/{id}")
     public ResponseEntity<Truck> updateTruck(@PathVariable Long id, @RequestBody Truck newTruck) {
@@ -50,7 +48,6 @@ public class TruckController {
         return ResponseEntity.ok(updatedTruck);
     }
 
-    //e testuar
     @PreAuthorize(value = "hasAnyRole('WAREHOUSE_MANAGER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTruck(@PathVariable Long id) {

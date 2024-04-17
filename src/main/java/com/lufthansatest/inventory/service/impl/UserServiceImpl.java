@@ -4,15 +4,25 @@ import com.lufthansatest.inventory.exceptions.GeneralException;
 import com.lufthansatest.inventory.mapper.UserMapper;
 import com.lufthansatest.inventory.model.dto.UserDTO;
 import com.lufthansatest.inventory.model.entity.User;
+import com.lufthansatest.inventory.model.enums.UserRole;
 import com.lufthansatest.inventory.repository.UserRepository;
 import com.lufthansatest.inventory.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ProblemDetail;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,18 +34,20 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    //private final InventoryItemRepository inventoryItemRepository;
-    //private final OrderRepository orderRepository;
-    //private final TruckRepository truckRepository;
+
     private final PasswordEncoder encoder;
 
 
     @Override
     public UserDTO createUser(User user) {
         log.info("Create new user{}",user.getUsername());
-        user.setPassword(encoder.encode(user.getPassword()));
-        user = userRepository.save(user);
-        return userMapper.toDto(user);
+        if (isAdmin()) {
+            user.setPassword(encoder.encode(user.getPassword()));
+            user = userRepository.save(user);
+            return userMapper.toDto(user);
+        }else {
+            throw new GeneralException("The user does not have the rights.");
+        }
     }
 
     @Override
@@ -62,11 +74,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDTO> loadAllUsers() {
-        return userRepository
-                .findAll()
-                .stream()
-                .map(userMapper::toDto)
-                .collect(Collectors.toList());
+        if (isAdmin()) {
+            return  userRepository
+                    .findAll()
+                    .stream()
+                    .map(userMapper::toDto)
+                    .collect(Collectors.toList());
+        }
+        else {
+            return (List<UserDTO>) ResponseEntity.of(ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED)).build();
+        }
     }
 
 
@@ -82,30 +99,34 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO updateUser(Long id, User requestedUser) {
-        Optional<User> existingUser = userRepository.findById(id);
-        checkIfUserExist(existingUser);
-        User user = existingUser.get();
-        log.info("Updating user{}",user.getUsername());
-        if(requestedUser.getUsername() != null) {
-            if(userRepository.findByUsername(requestedUser.getUsername()).isPresent()) {
-                throw new GeneralException("Username is taken!");
+        // Retrieve existing user from the database
+        Optional<User> existingUserOptional = userRepository.findById(id);
+        User existingUser = existingUserOptional.orElseThrow(() -> new GeneralException("User not found"));
+
+        Long userID = existingUser.getId();
+
+
+            // Update user fields if they are not null in the requestedUser object
+            if (requestedUser.getUsername() != null) {
+                existingUser.setUsername(requestedUser.getUsername());
             }
-            user.setUsername(requestedUser.getUsername());
-        }
-        user.setPassword(existingUser.get().getPassword());
-        if (requestedUser.getUsername() != null) {
-            user.setUsername(requestedUser.getUsername());}
-        if (requestedUser.getPassword() != null){
-            user.setPassword(requestedUser.getPassword());}
-        if (requestedUser.getRole() != null) {
-            user.setRole(requestedUser.getRole());}
-        if (requestedUser.getEmail() != null) {
-            user.setEmail(requestedUser.getEmail());}
-        user = userRepository.save(user);
-        return userMapper.toDto(user);
+            if (requestedUser.getPassword() != null) {
+                existingUser.setPassword(requestedUser.getPassword());
+            }
+            if (requestedUser.getRole() != null) {
+                existingUser.setRole(requestedUser.getRole());
+            }
+            if (requestedUser.getEmail() != null) {
+                existingUser.setEmail(requestedUser.getEmail());
+            }
 
+
+        // Save the updated user entity
+        User updatedUser = userRepository.save(existingUser);
+
+        // Convert the updated user entity to DTO and return
+        return userMapper.toDto(updatedUser);
     }
-
     @Transactional
     public void deleteUser(Long id) {
         log.info("Deleting User with id{} ",id);
@@ -113,6 +134,27 @@ public class UserServiceImpl implements UserService {
         if (user.isPresent()){
             userRepository.deleteById(id);
         }else throw new GeneralException("User not found with id " + id);
+    }
+
+    public boolean isAdmin(){
+        JwtAuthenticationToken authentication = ((JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication());
+        Object objectRoles = ((Jwt) authentication.getCredentials()).getClaims().getOrDefault("scope", new ArrayList<>());
+        List<String> roles = (List<String>) objectRoles;
+            return roles.contains(UserRole.SYSTEM_ADMIN.name());
+    }
+
+    private boolean isManager(){
+        JwtAuthenticationToken authentication = ((JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication());
+        Object objectRoles = ((Jwt) authentication.getCredentials()).getClaims().getOrDefault("scope", new ArrayList<>());
+        List<String> roles = (List<String>) objectRoles;
+        return roles.contains(UserRole.WAREHOUSE_MANAGER.name());
+    }
+
+    private boolean isClient(){
+        JwtAuthenticationToken authentication = ((JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication());
+        Object objectRoles = ((Jwt) authentication.getCredentials()).getClaims().getOrDefault("scope", new ArrayList<>());
+        List<String> roles = (List<String>) objectRoles;
+        return roles.contains(UserRole.CLIENT.name());
     }
 
 }

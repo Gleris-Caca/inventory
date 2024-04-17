@@ -4,10 +4,7 @@ import com.lufthansatest.inventory.exceptions.*;
 import com.lufthansatest.inventory.mapper.InventoryItemMapper;
 import com.lufthansatest.inventory.mapper.OrderMapper;
 import com.lufthansatest.inventory.model.dto.OrderDTO;
-import com.lufthansatest.inventory.model.dto.OrderItemDTO;
-import com.lufthansatest.inventory.model.entity.InventoryItem;
 import com.lufthansatest.inventory.model.entity.Order;
-import com.lufthansatest.inventory.model.entity.OrderItem;
 import com.lufthansatest.inventory.model.enums.OrderStatus;
 import com.lufthansatest.inventory.repository.OrderRepository;
 import com.lufthansatest.inventory.service.InventoryService;
@@ -45,56 +42,31 @@ public class OrderServiceImpl implements OrderService {
         if (optionalOrder.isPresent()) {
             Order order = optionalOrder.get();
 
-            Order orderToUpdate = orderMapper.toEntity(updatedOrderDTO);
-
-
             // Check if the order status allows updates
-            if (order.getStatus().equals(OrderStatus.CREATED) ||
-                order.getStatus().equals(OrderStatus.DECLINED)) {
+            if (order.getStatus().equals(OrderStatus.CREATED) || order.getStatus().equals(OrderStatus.DECLINED)) {
                 // Update order details
-                if (Boolean.FALSE.equals(orderToUpdate.getOrderNumber().isEmpty())){
-                    order.setOrderNumber(orderToUpdate.getOrderNumber());
+                if (updatedOrderDTO.getOrderNumber() != null && !updatedOrderDTO.getOrderNumber().isEmpty()) {
+                    order.setOrderNumber(updatedOrderDTO.getOrderNumber());
                 }
-                if (Boolean.FALSE.equals(orderToUpdate.getSubmittedDate()!=null)) {
+                if (updatedOrderDTO.getSubmittedDate() != null) {
                     order.setSubmittedDate(updatedOrderDTO.getSubmittedDate());
                 }
-
-                if (Boolean.FALSE.equals(orderToUpdate.getStatus()!=null)) {
+                if (updatedOrderDTO.getStatus() != null) {
                     order.setStatus(updatedOrderDTO.getStatus());
                 }
-                if (Boolean.FALSE.equals(orderToUpdate.getDeadlineDate()!=null)) {
+                if (updatedOrderDTO.getDeadlineDate() != null) {
                     order.setDeadlineDate(updatedOrderDTO.getDeadlineDate());
                 }
-                if (Boolean.FALSE.equals(orderToUpdate.getReason()!=null)) {
+                if (updatedOrderDTO.getReason() != null) {
                     order.setReason(updatedOrderDTO.getReason());
                 }
                 if (updatedOrderDTO.getItems() != null) {
                     order.setItems(updatedOrderDTO.getItems());
                 }
 
-//                List<OrderItem> updatedItems = updatedOrderDTO.getItems();
-
-//                if (Boolean.TRUE.equals(updatedItems != null)) {
-//                    int count = 0;
-//                    for (OrderItem updatedItem : updatedItems) {
-//
-//                        //We check if the item id is provided and then we update
-//                        if (updatedItems.get(count).getItem().getId()!=null) {
-//                            InventoryItem findItem = inventoryService.findInventoryItemById(updatedItems.get(count).getItem().getId());
-//
-//                            if (updatedItems.get(count).getItem().getId().equals(order.getItems().get(count).getId())) {
-//                                order.getItems().set(count, updatedItem);
-//                            }
-//                        } else {
-//                            //Here we know item id is not provided and then we just add new item
-//                            order.setItems(updatedItems);
-//                        }
-//                        count++;
-//                    }
-//                }
                 // Save the updated order
-                orderRepository.save(order);
-                return orderMapper.toDto(order);
+                Order updatedOrder = orderRepository.save(order);
+                return orderMapper.toDto(updatedOrder);
             } else {
                 throw new GeneralException("Order cannot be updated because its status is not CREATED or DECLINED");
             }

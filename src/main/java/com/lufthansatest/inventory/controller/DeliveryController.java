@@ -23,24 +23,12 @@ public class DeliveryController {
     private final DeliveryService deliveryService;
 
     @PreAuthorize(value = "hasAnyRole('WAREHOUSE_MANAGER')")
-//    @PostMapping("/schedule")
-//    public ResponseEntity<String> scheduleDeliveryForApprovedOrder(@RequestParam Long orderId,
-//                                                                   @RequestParam Date deliveryDate,
-//                                                                   @RequestBody List<Truck> trucks) {
-//        try {
-//            deliveryService.scheduleDeliveryForApprovedOrder(orderId, deliveryDate, trucks);
-//            return ResponseEntity.ok("Delivery scheduled successfully");
-//        } catch (DeliverySchedulingException e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-//        }
-//    }
-
-    @PostMapping("/schedule")
+    @PostMapping("/schedule/{orderId}")
     public ResponseEntity<String> scheduleDeliveryForApprovedOrder(
-            @RequestParam Long orderId,
-            @RequestParam String deliveryDate) {
+            @PathVariable Long orderId) {
         try {
-            Date parsedDeliveryDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(deliveryDate);
+            String date = "2024-04-14";
+            Date parsedDeliveryDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(date);
             deliveryService.scheduleDeliveryForApprovedOrder(orderId, parsedDeliveryDate, null); // trucks are not passed in the URL
             return ResponseEntity.ok("Delivery scheduled successfully");
         } catch (ParseException e) {

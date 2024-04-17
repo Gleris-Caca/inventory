@@ -28,7 +28,7 @@ public class OrderController {
     private final OrderMapper orderMapper;
     private final OrderApprovalService orderApprovalService;
 
-    //e testuar ne postman
+
     @PreAuthorize(value = "hasAnyRole('CLIENT')")
     @PostMapping("/create")
     public ResponseEntity<OrderDTO> createOrder(@RequestBody OrderDTO orderDTO) {
@@ -36,6 +36,7 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdOrder);
     }
 
+    //plotso
     @PreAuthorize(value = "hasAnyRole('CLIENT')")
     @PutMapping("/update/{orderId}")
     public ResponseEntity<OrderDTO> updateOrder(@PathVariable Long orderId, @RequestBody OrderDTO updatedOrderDTO) {
@@ -43,7 +44,7 @@ public class OrderController {
         return new ResponseEntity<>(updatedOrder, HttpStatus.OK);
     }
 
-    // e testuar me postman
+
     @PreAuthorize(value = "hasAnyRole('CLIENT')")
     @DeleteMapping("/cancel/{orderId}")
     public ResponseEntity<String> cancelOrder(@PathVariable Long orderId) {
@@ -59,7 +60,7 @@ public class OrderController {
         }
     }
 
-    // e testar me postman
+
     @PreAuthorize(value = "hasAnyRole('CLIENT')")
     @PostMapping("/{orderId}/submit")
     public ResponseEntity<OrderDTO> submitOrderForApproval(@PathVariable Long orderId) {
@@ -75,7 +76,7 @@ public class OrderController {
         return ResponseEntity.ok(orders);
     }
 
-    //e testuar me postman
+
     @PreAuthorize(value = "hasAnyRole('WAREHOUSE_MANAGER')")
     @GetMapping("/all")
     public ResponseEntity<List<OrderDTO>> getAllOrders() {
@@ -83,7 +84,7 @@ public class OrderController {
         return ResponseEntity.ok(orders);
     }
 
-    //e testuar ne postman
+
     @PreAuthorize(value = "hasAnyRole('WAREHOUSE_MANAGER')")
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderDTO> getOrderDetails(@PathVariable Long orderId) {
@@ -95,7 +96,7 @@ public class OrderController {
         }
     }
 
-    //e testuar me postman
+
     @PreAuthorize(value = "hasAnyRole('WAREHOUSE_MANAGER')")
     @PostMapping("/{orderId}/approve")
     public ResponseEntity<OrderDTO> approveOrder(@PathVariable Long orderId) {

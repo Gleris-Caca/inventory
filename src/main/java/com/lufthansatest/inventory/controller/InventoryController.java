@@ -19,14 +19,14 @@ public class InventoryController {
 
     private final InventoryService inventoryService;
 
-    //e testuar
+
     @PreAuthorize(value = "hasAnyRole('WAREHOUSE_MANAGER')")
     @GetMapping("/items")
     public ResponseEntity<List<InventoryItem>> getAllInventoryItems() {
         List<InventoryItem> inventoryItems = inventoryService.getAllInventoryItems();
         return new ResponseEntity<>(inventoryItems, HttpStatus.OK);
     }
-    //e testuar
+
     @PreAuthorize(value = "hasAnyRole('WAREHOUSE_MANAGER')")
     @GetMapping("/items/{id}")
     public ResponseEntity<InventoryItem> getInventoryItemById(@PathVariable Long id) {
@@ -34,7 +34,7 @@ public class InventoryController {
         return new ResponseEntity<>(inventoryItem, HttpStatus.OK);
     }
 
-    //e testuar
+
     @PreAuthorize(value = "hasAnyRole('WAREHOUSE_MANAGER')")
     @PostMapping("/items")
     public ResponseEntity<InventoryItem> createInventoryItem(@RequestBody InventoryItem item) {
@@ -42,14 +42,14 @@ public class InventoryController {
         return new ResponseEntity<>(createdItem, HttpStatus.CREATED);
     }
 
-    //e testuar
+
     @PreAuthorize(value = "hasAnyRole('WAREHOUSE_MANAGER')")
     @PutMapping("/items/{id}")
     public ResponseEntity<InventoryItem> updateInventoryItem(@PathVariable Long id, @RequestBody InventoryItem newItem) {
         InventoryItem updatedItem = inventoryService.updateInventoryItem(id, newItem);
         return new ResponseEntity<>(updatedItem, HttpStatus.OK);
     }
-    //e testuar
+
     @PreAuthorize(value = "hasAnyRole('WAREHOUSE_MANAGER')")
     @DeleteMapping("/items/{id}")
     public ResponseEntity<Void> deleteInventoryItem(@PathVariable Long id) {
