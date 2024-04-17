@@ -6,5 +6,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TruckRepository extends JpaRepository<Truck, Long> {
-    // Define custom query methods if needed
 }

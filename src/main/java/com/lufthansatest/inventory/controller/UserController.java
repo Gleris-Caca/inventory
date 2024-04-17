@@ -21,7 +21,6 @@ import java.util.Optional;
 public class UserController {
     private final UserService userService;
 
-    //e testuar me postman
     @PreAuthorize("hasAnyAuthority('SYSTEM_ADMIN')")
     @RequestMapping(method = RequestMethod.GET, path = "/allUsers")
     public ResponseEntity<List<UserDTO>> getAllUsers() {
@@ -32,7 +31,7 @@ public class UserController {
         }
     }
 
-    //e testuar
+
     @PreAuthorize("hasAnyAuthority('SYSTEM_ADMIN')")
     @PostMapping("/createUser")
     public ResponseEntity<UserDTO> createUser(@RequestBody User userDTO) {
@@ -40,7 +39,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
-    //shikoje prap
+
     @PreAuthorize(value = "hasAnyRole('SYSTEM_ADMIN')")
     @RequestMapping(method = RequestMethod.PUT, value = "/updateUser/{id}")
     public ResponseEntity<UserDTO> updateUser(@PathVariable(value = "id") Long id,@RequestBody User user){
@@ -48,8 +47,6 @@ public class UserController {
         return ResponseEntity.status(200).build();
     }
 
-
-    //e testuar
     @PreAuthorize(value = "hasAnyRole('SYSTEM_ADMIN')")
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {

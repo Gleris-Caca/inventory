@@ -142,19 +142,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     public void markOrderAsFulfilled(Long orderId) {
-        // Retrieve the order from the database
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("Order not found with id: " + orderId));
 
-        // Check if the order status is UNDER_DELIVERY
         if (!order.getStatus().equals(OrderStatus.UNDER_DELIVERY)) {
             throw new OrderFulfillmentNotAllowedException("Order status does not allow fulfillment");
         }
-
-        // Update the order status to FULFILLED
         order.setStatus(OrderStatus.FULFILLED);
 
-        // Save the updated order
         orderRepository.save(order);
     }
 }

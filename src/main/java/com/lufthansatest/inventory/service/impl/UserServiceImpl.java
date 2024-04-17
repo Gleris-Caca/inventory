@@ -121,10 +121,8 @@ public class UserServiceImpl implements UserService {
             }
 
 
-        // Save the updated user entity
         User updatedUser = userRepository.save(existingUser);
 
-        // Convert the updated user entity to DTO and return
         return userMapper.toDto(updatedUser);
     }
     @Transactional
